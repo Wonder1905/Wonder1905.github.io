@@ -1,14 +1,7 @@
 github_users:
-  - torvalds
-  - alshedivat
+  - Wonder1905
 
 repo_description_lines_max: 2
 
+# Add repos you want featured on /repositories/, e.g. Wonder1905/some-repo
 github_repos:
-  - alshedivat/al-folio
-  - jekyll/jekyll
-  - twbs/bootstrap
-  - jquery/jquery
-  - FortAwesome/Font-Awesome
-  - mathjax/MathJax
-  - jpswalsh/academicons
