@@ -27,4 +27,4 @@ latest_posts:
 
 I write here about machine learning research — mostly work in progress and notes I want to keep somewhere public, rather than finished results.
 
-Posts are in the [blog](/blog/).
+Posts are in the [blog](/blog/). Code is on [GitHub](https://github.com/Wonder1905).
