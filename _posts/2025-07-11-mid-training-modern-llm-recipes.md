@@ -29,9 +29,9 @@ Recently, several companies have mentioned mid-training in their job postings (O
 
 Let's examine three papers that explicitly mention mid-training:
 
-- [**Olmo-2**](https://arxiv.org/pdf/2501.00656) — "In the second stage (Mid-training), we train on the Dolmino Mix 1124. This mix is smaller, but it contains higher-quality text, as well as synthetic data to boost key abilities."
-- [**Phi-4**](https://arxiv.org/pdf/2412.08905) — "includes a mid-training stage where the context length is increased from the original 4K to 16K"
-- [**Yi**](https://arxiv.org/pdf/2412.01253) — "In the mid-training stage, we focus on enhancing model capabilities and extending context length... upsampling strategy for high-quality data, emphasizing complex reasoning and multilingual capabilities for low-resource languages."
+- **[Olmo-2](https://arxiv.org/pdf/2501.00656)** — "In the second stage (Mid-training), we train on the Dolmino Mix 1124. This mix is smaller, but it contains higher-quality text, as well as synthetic data to boost key abilities."
+- **[Phi-4](https://arxiv.org/pdf/2412.08905)** — "includes a mid-training stage where the context length is increased from the original 4K to 16K"
+- **[Yi](https://arxiv.org/pdf/2412.01253)** — "In the mid-training stage, we focus on enhancing model capabilities and extending context length... upsampling strategy for high-quality data, emphasizing complex reasoning and multilingual capabilities for low-resource languages."
 
 We can categorize mid-training goals into four main areas:
 
@@ -43,18 +43,24 @@ We can categorize mid-training goals into four main areas:
 An intriguing example of "Scaling Synthetic Data" and "High Quality Training Data" can be observed in the [allenai mid-training dataset](https://huggingface.co/datasets/allenai/mid-training-OpenMathReasoning-rewrite-teacher-student-lecture-filtered), released recently. This dataset features content "rewritten" as dialogues between a teacher and a student:
 
 ```text
-Determine the median and the mode of Jerelyn's scores from her first six tests,
-which were 92, 78, 86, 92, 95, and 91.
+Determine the median and the mode of Jerelyn's scores
+from her first six tests, which were 92, 78, 86, 92,
+95, and 91.
 
-Teacher: Today, let's talk about two important measures...
-Student: So, for the median, I always need to sort the data first, right?
-Teacher: Exactly! Sorting the data is essential so you can correctly identify
-         the middle value or values. For the mode, you simply look for the
+Teacher: Today, let's talk about two important
+         measures...
+Student: So, for the median, I always need to sort the
+         data first, right?
+Teacher: Exactly! Sorting the data is essential so you
+         can correctly identify the middle value or
+         values. For the mode, you simply look for the
          value or values that occur the most often.
 …
-Student: First, I'll sort the numbers in ascending order. Arranged from least
-         to greatest: $78$, $86$, $91$, $92$, $92$, $95$.
-Teacher: Excellent. Since there are six numbers, what do you do next?
+Student: First, I'll sort the numbers in ascending
+         order. Arranged from least to greatest: $78$,
+         $86$, $91$, $92$, $92$, $95$.
+Teacher: Excellent. Since there are six numbers, what
+         do you do next?
 ```
 
 ## The pre-training phases
