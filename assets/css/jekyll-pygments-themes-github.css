@@ -67,18 +67,11 @@
 .highlight .ne {
   color: #990000;
   font-weight: bold;
-} /* Name.Exception */
-.highlight .nf {
-  color: #990000;
-  font-weight: bold;
-} /* Name.Function */
+} /* Name.Exception */ /* Name.Function */
 .highlight .nl {
   color: #990000;
   font-weight: bold;
-} /* Name.Label */
-.highlight .nn {
-  color: #555555;
-} /* Name.Namespace */
+} /* Name.Label */ /* Name.Namespace */
 .highlight .nt {
   color: #000080;
 } /* Name.Tag */ /* Name.Variable */ /* Operator.Word */

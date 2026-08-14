@@ -80,17 +80,10 @@
 } /* Name.Entity */
 .highlight .ne {
   color: #bbbbbb;
-} /* Name.Exception */
-.highlight .nf {
-  color: #447fcf;
-} /* Name.Function */
+} /* Name.Exception */ /* Name.Function */
 .highlight .nl {
   color: #d0d0d0;
-} /* Name.Label */
-.highlight .nn {
-  color: #447fcf;
-  text-decoration: underline;
-} /* Name.Namespace */ /* Name.Other */
+} /* Name.Label */ /* Name.Namespace */ /* Name.Other */
 .highlight .py {
   color: #d0d0d0;
 } /* Name.Property */
