@@ -1,0 +1,111 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> Mid-Training &amp; Modern LLM Recipes | Barak Battash </title> <meta name="author" content="Barak Battash"> <meta name="description" content="What mid-training actually is, and how it shows up in Olmo-2, Phi-4, Yi, Qwen3, Pangu and SmolLM3."> <meta name="keywords" content="research, machine-learning, blog"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.css" integrity="sha256-zTN0r+0OKaIv2xqeNNIYxNk0pWJ6+IqPGc1iDgVzWF0=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="data:image/svg+xml,&lt;svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20100%20100%22&gt;&lt;text%20y=%22.9em%22%20font-size=%2290%22&gt;%E2%9A%9B%EF%B8%8F&lt;/text&gt;&lt;/svg&gt;"> <link rel="stylesheet" href="/assets/css/main.css?v=3116ba77db9ee1581d05bb3e86fbf7f1"> <link rel="canonical" href="https://wonder1905.github.io/blog/2025/mid-training-modern-llm-recipes/"> <script src="/assets/js/theme.js?v=5286c3e4c334d0ecb8fc0c40ff4fa7ec"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> <span class="font-weight-bold">Barak</span> Battash </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">about </a> </li> <li class="nav-item active"> <a class="nav-link" href="/blog/">blog </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item "> <a class="nav-link" href="/projects/">projects </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="row"> <div class="col-sm-3"> <nav id="toc-sidebar" class="sticky-top toc toc-sidebar" aria-label="Table of contents" data-toc-collapse="expanded" data-toc-collapse-depth=""></nav> </div> <div class="col-sm-9"> <div class="post"> <header class="post-header"> <h1 class="post-title">Mid-Training &amp; Modern LLM Recipes</h1> <p class="post-meta"> Created on July 11, 2025 </p> <p class="post-tags"> <a href="/blog/2025"> <i class="fa-solid fa-calendar fa-sm"></i> 2025 </a>   ·   <a href="/blog/tag/llm"> <i class="fa-solid fa-hashtag fa-sm"></i> llm</a>   <a href="/blog/tag/mid-training"> <i class="fa-solid fa-hashtag fa-sm"></i> mid-training</a>   <a href="/blog/tag/pre-training"> <i class="fa-solid fa-hashtag fa-sm"></i> pre-training</a>   <a href="/blog/tag/long-context"> <i class="fa-solid fa-hashtag fa-sm"></i> long-context</a>   <a href="/blog/tag/reasoning"> <i class="fa-solid fa-hashtag fa-sm"></i> reasoning</a>   ·   <a href="/blog/category/research"> <i class="fa-solid fa-tag fa-sm"></i> research</a> </p> </header> <article class="post-content"> <div id="markdown-content"> <blockquote class="block-tip"> <p>Disclaimers: The definitions in this post are not rigorous and are presented in a way I think it is easier to grasp the main idea.</p> </blockquote> <p>We all know about the pre and post-training phases of large language models.</p> <p>Pre-training today typically involves processing (much) more than 10T tokens from web pages, books, and code, providing models with broad linguistic, factual, and reasoning foundations.</p> <p>Post-training builds upon the pre-trained LLM by using labeled data to guide the model in producing desired outputs for specific instructions and aligning with human preferences.</p> <p>Recently, several companies have mentioned mid-training in their job postings (OpenAI, xAI) and technical reports (Phi-3.5/4, Olmo, and Yi).</p> <h2 id="mid-training-basic-characteristics">Mid-training basic characteristics</h2> <ol> <li>It occurs after pre-training and before post-training.</li> <li>It’s shorter in duration than the pre-training phase.</li> <li>It enhances the model’s long context understanding and reasoning abilities.</li> </ol> <p>Let’s examine three papers that explicitly mention mid-training:</p> <ul> <li> <a href="https://arxiv.org/pdf/2501.00656" rel="external nofollow noopener" target="_blank"><strong>Olmo-2</strong></a> — “In the second stage (Mid-training), we train on the Dolmino Mix 1124. This mix is smaller, but it contains higher-quality text, as well as synthetic data to boost key abilities.”</li> <li> <a href="https://arxiv.org/pdf/2412.08905" rel="external nofollow noopener" target="_blank"><strong>Phi-4</strong></a> — “includes a mid-training stage where the context length is increased from the original 4K to 16K”</li> <li> <a href="https://arxiv.org/pdf/2412.01253" rel="external nofollow noopener" target="_blank"><strong>Yi</strong></a> — “In the mid-training stage, we focus on enhancing model capabilities and extending context length… upsampling strategy for high-quality data, emphasizing complex reasoning and multilingual capabilities for low-resource languages.”</li> </ul> <p>We can categorize mid-training goals into four main areas:</p> <ul> <li>🔥 <strong>High Quality Training Data</strong> — This approach improves a model’s performance by training it on a smaller, high-quality dataset curated from the best available sources and after multiple filtering techniques. The Olmo-2 model report introduced this concept systematically with its “Dolmino Mix” dataset.</li> <li>🥖 <strong>Domain and Language Extension</strong> — supporting more languages, mostly low-resource languages, or understanding specialized subjects.</li> <li>☄️ <strong>Long Context Extension</strong> — might happen gradually.</li> <li>⌨️ <strong>Scaling Synthetic Data</strong> — This method uses powerful AI models to generate vast amounts of high-quality “synthetic” training data. Note that synthetic data is mostly not generated from scratch, but more by augmenting existing data. The Olmo-2 report details this as a key part of its mid-training, employing techniques like using AI “judge” models to verify data quality.</li> </ul> <p>An intriguing example of “Scaling Synthetic Data” and “High Quality Training Data” can be observed in the <a href="https://huggingface.co/datasets/allenai/mid-training-OpenMathReasoning-rewrite-teacher-student-lecture-filtered" rel="external nofollow noopener" target="_blank">allenai mid-training dataset</a>, released recently. This dataset features content “rewritten” as dialogues between a teacher and a student:</p> <div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Determine the median and the mode of Jerelyn's scores from her first six tests,
+which were 92, 78, 86, 92, 95, and 91.
+
+Teacher: Today, let's talk about two important measures...
+Student: So, for the median, I always need to sort the data first, right?
+Teacher: Exactly! Sorting the data is essential so you can correctly identify
+         the middle value or values. For the mode, you simply look for the
+         value or values that occur the most often.
+…
+Student: First, I'll sort the numbers in ascending order. Arranged from least
+         to greatest: $78$, $86$, $91$, $92$, $92$, $95$.
+Teacher: Excellent. Since there are six numbers, what do you do next?
+</code></pre></div></div> <h2 id="the-pre-training-phases">The pre-training phases</h2> <p>Mid-training is not just a trendy label; it’s a substantive concept that many teams apply even when they don’t explicitly use the term. Consider <a href="https://arxiv.org/pdf/2505.09388" rel="external nofollow noopener" target="_blank">Qwen3</a>:</p> <blockquote> <p>“Pre-training went through a three-stage process:</p> <p>(1) General stage — context window, 30T tokens and 119 languages and dialects.</p> <p>(2) Reasoning Stage (S2): increase in the proportion of STEM, coding, reasoning, and synthetic data. Still 4k context length.</p> <p>(3) Long Context Stage: high-quality long context corpora, sequence length of 32k.”</p> </blockquote> <p>Another example is Huawei’s <a href="https://arxiv.org/pdf/2505.21411" rel="external nofollow noopener" target="_blank">Pangu</a>. Its pre-training unfolds in three phases: Phase 1 uses a 4K-token context window, while Phases 2 and 3 expand to 32K tokens. Phase 2 focuses on reasoning by “increasing the amount and quality of the reasoning data.” Phase 3 becomes even more selective: “In this phase, priority is given to the data with extremely higher quality and difficulty scores.”</p> <p>Sound familiar?</p> <h2 id="pre-training-phases-and-mid-training">Pre-training phases and mid-training</h2> <p>A few days ago, Hugging Face released <a href="https://huggingface.co/blog/smollm3" rel="external nofollow noopener" target="_blank">SmolLM3</a>, a 3B parameter model. The model underwent a three-phase pre-training process that gradually shifted its data distribution toward larger code and math segments.</p> <figure> <picture> <source class="responsive-img-srcset" srcset="/assets/img/smollm3-pretraining-phases-480.webp 480w,/assets/img/smollm3-pretraining-phases-800.webp 800w,/assets/img/smollm3-pretraining-phases-1400.webp 1400w," type="image/webp" sizes="95vw"></source> <img src="/assets/img/smollm3-pretraining-phases.png" class="img-fluid rounded z-depth-1" width="100%" height="auto" data-zoomable="" loading="eager" onerror="this.onerror=null; document.querySelectorAll('.responsive-img-srcset').forEach(function (n) { n.remove(); });"> </picture> <figcaption class="caption">SmolLM3 three-phase pre-training data mixture. Source: huggingface.co/blog/smollm3</figcaption> </figure> <p>Subsequently, its mid-training phases focus on gradually extending the context length from 4k to 128k tokens and enhancing reasoning capabilities.</p> <h2 id="final-thoughts">Final Thoughts</h2> <ul> <li> <strong>Blurring Boundaries:</strong> The distinction between LLM training phases is increasingly fuzzy. What some labs label as pre-training, others consider mid-training. We’re seeing instruction and reasoning data incorporated earlier in the training process.</li> <li> <strong>Out of Scope:</strong> This blog post doesn’t cover several important technical aspects, including learning rate scheduling during mid-training, specific data mixture compositions, and how mid-training enhances reasoning through reinforcement learning.</li> </ul> <p>If you have questions, want to discuss this topic, or share comments, please feel free to DM us on X: <a href="https://x.com/barak1724" rel="external nofollow noopener" target="_blank">barak1724</a>.</p> </div> </article> </div> </div> </div> </div> <footer class="fixed-bottom" role="contentinfo"> <div class="container mt-0"> © Copyright 2026 Barak Battash. Powered by <a href="https://jekyllrb.com/" target="_blank" rel="external nofollow noopener">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" rel="external nofollow noopener" target="_blank">al-folio</a> theme. Hosted by <a href="https://pages.github.com/" target="_blank" rel="external nofollow noopener">GitHub Pages</a>. </div> </footer> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script defer src="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.min.js" integrity="sha256-lo/r+jQ81wWrxdIiiiEEd538z4+dTJTt+leOuAS7GCw=" crossorigin="anonymous"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script> <script async src="https://badge.dimensions.ai/badge.js"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-about",
+    title: "about",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-blog",
+          title: "blog",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/blog/";
+          },
+        },{id: "nav-publications",
+          title: "publications",
+          description: "publications by categories in reversed chronological order. generated by jekyll-scholar.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-projects",
+          title: "projects",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/projects/";
+          },
+        },{id: "post-mid-training-amp-modern-llm-recipes",
+        
+          title: "Mid-Training &amp; Modern LLM Recipes",
+        
+        description: "What mid-training actually is, and how it shows up in Olmo-2, Phi-4, Yi, Qwen3, Pangu and SmolLM3.",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/mid-training-modern-llm-recipes/";
+          
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/Wonder1905", "_blank");
+        },
+      },{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>
