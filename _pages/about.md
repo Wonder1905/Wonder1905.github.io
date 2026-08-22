@@ -25,6 +25,6 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I write here about machine learning research — mostly work in progress and notes I want to keep somewhere public, rather than finished results.
+I write here about deep learning. Usually I'll walk through some idea, then share what I think of it.
 
 Posts are in the [blog](/blog/). Code is on [GitHub](https://github.com/Wonder1905).
