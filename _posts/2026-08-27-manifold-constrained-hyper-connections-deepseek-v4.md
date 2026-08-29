@@ -14,7 +14,7 @@ The residual stream is the route by which information survives depth: every atte
 
 What draws me to these mechanisms is their use of dynamic parameterization: learned weights use the current token state to generate another set of per-token weights, which decide how each sub-layer reads from and writes to the residual stream. That idea has roots in hypernetworks - a field close to my heart.
 
-We will start with *Manifold-Constrained Hyper-Connections* (mHC), introduced by DeepSeek in [Xie et al., 2025](https://arxiv.org/abs/2512.24880) and used in V4, then use it to frame Qwen3.8-Flash-Next's design.
+We will start with [*Manifold-Constrained Hyper-Connections*](https://arxiv.org/abs/2512.24880) (mHC), introduced by DeepSeek and used in V4, then use it to frame Qwen3.8-Flash-Next's design.
 
 {% include figure.liquid path="assets/img/mhc.png" class="img-fluid rounded z-depth-1" zoomable=true caption="(a) Residual: one stream, identity skip. (b) Hyper-Connections: $n$ streams, compress into the block, expand out, mix on the skip. (c) mHC: the same topology with the maps constrained. From DeepSeek." %}
 
