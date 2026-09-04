@@ -18,11 +18,9 @@ We will start with [*Manifold-Constrained Hyper-Connections*](https://arxiv.org/
 
 {% include figure.liquid path="assets/img/mhc.png" class="img-fluid rounded z-depth-1" zoomable=true caption="(a) Residual: one stream, identity skip. (b) Hyper-Connections: $n$ streams, compress into the block, expand out, mix on the skip. (c) mHC: the same topology with the maps constrained. From DeepSeek." %}
 
-#### Why widen the residual
+But why should we widen the residual stream? In a standard pre-norm Transformer, every sub-layer reads and updates the same residual stream. A feature written early must compete with everything written after it. Widening the residual gives those features separate paths through depth without changing $\mathcal{F}$.
 
-In a standard pre-norm Transformer, every sub-layer reads and updates the same residual stream. A feature written early must compete with everything written after it. Widening the residual gives those features separate paths through depth without changing $\mathcal{F}$.
-
-A wider residual would cost more if that width entered the block: attention and the FFN scale with hidden size. It does not enter. The extra width lives on the skip as $n$ streams of the original hidden size $C$; they are compressed to a single stream in $\mathbb{R}^C$, before the block and expanded back to $n$ after it, so attention and the FFN still run at $C$.
+Widening it naively would increase the computational burden, for the obvious reason that the attention and FFN blocks depend on hidden size. To overcome this, the widened residual is compressed to a single stream before entering $\mathcal{F}$ and widened back to $n$ streams right after, so attention and the FFN still run on a single stream.
 
 #### Compress, compute, expand
 
@@ -60,21 +58,29 @@ $$
 \underbrace{h^{\mathrm{out}}_l}_{1\times C}\;=\;\mathcal{F}\big(\mathrm{RMSNorm}(h^{\mathrm{in}}_l)\big)
 $$
 
-**Expand, $1 \to n$, and mix.** The block output is fanned back across streams, the saved state is mixed along the skip, and the two are summed - the figure's two branches meeting at $\oplus$:
+**Expand, $1 \to n$.** The block output is fanned back across streams, one gain per stream:
 
 $$
-\underbrace{h^{\mathrm{post}}_l}_{n\times C}=\underbrace{H^{\mathrm{post}\top}_l}_{n\times 1}\,\underbrace{h^{\mathrm{out}}_l}_{1\times C},\qquad \underbrace{h^{\mathrm{res}}_l}_{n\times C}=\underbrace{H^{\mathrm{res}}_l}_{n\times n}\,\underbrace{\mathbf{x}_l}_{n\times C},\qquad \mathbf{x}_{l+1}=h^{\mathrm{res}}_l+h^{\mathrm{post}}_l
+\underbrace{h^{\mathrm{post}}_l}_{n\times C}=\underbrace{H^{\mathrm{post}\top}_l}_{n\times 1}\,\underbrace{h^{\mathrm{out}}_l}_{1\times C}
+$$
+
+**Mix, $n \to n$.** The saved state is mixed along the skip, and the two are summed - the figure's two branches meeting at $\oplus$:
+
+$$
+\underbrace{h^{\mathrm{res}}_l}_{n\times C}=\underbrace{H^{\mathrm{res}}_l}_{n\times n}\,\underbrace{\mathbf{x}_l}_{n\times C},\qquad \mathbf{x}_{l+1}=h^{\mathrm{res}}_l+h^{\mathrm{post}}_l
 $$
 
 Each sub-layer applies this procedure once, so a Transformer block applies it twice. Before the LM head, the $n$ streams are combined into one.
 
 #### The skip has to survive depth
 
-DeepSeek's diagnosis is not that mixing is bad. Unconstrained $H^{\mathrm{res}}$, multiplied across depth, stops behaving like an identity: signals explode or vanish. mHC therefore projects each mix onto $\mathcal{M}$, the doubly stochastic matrices: non-negative, every row and every column summing to $1$. The rows make each output stream a weighted average of the input streams, which a softmax over streams would give you too. The columns are the extra ask: they hold the total across streams fixed, and they are what makes the property survive multiplication. A product of doubly stochastic matrices is still doubly stochastic, so the skip is as well behaved at layer $L$ as it was at layer $1$. The projection is Sinkhorn–Knopp, run for twenty iterations.
+Hyper-Connections leave $H^{\mathrm{res}}$ unconstrained. Across depth the skip applies the product of all the mixes, and that product drifts until the signal explodes or vanishes. The residual connection loses the identity mapping property it was built on, and training becomes unstable. mHC measured the gain of that product across depth: it peaks near $3000$ in Hyper-Connections, against about $1.6$ once the constraint is in place, where the ideal is $1$.
+
+mHC forces the mixing matrix to be doubly stochastic, i.e. non-negative with every row and every column summing to $1$. Doubly stochastic matrices are closed under multiplication, so the product across depth is doubly stochastic too and the skip stays well behaved at any depth. The projection is done with twenty Sinkhorn iterations, so it holds approximately rather than exactly, which is why the measured gain is $1.6$ and not $1$.
 
 #### Hypernetworks are back
 
-A hypernetwork is a net whose weights generate the weights of another map. That is what happens here: learned projection weights transform $\mathbf{x}_l$ into $H^{\mathrm{pre}}_l$, $H^{\mathrm{post}}_l$, and $H^{\mathrm{res}}_l$, so stored weights generate a new set of routing weights for every token. The projection weights and static biases are learned parameters; the three maps themselves are **generated per token** from the current state. Flatten, RMS-normalize, one matmul plus a bias, then constrain. Each map has its own learnable scale - $\alpha_l^{\mathrm{pre}}$, $\alpha_l^{\mathrm{post}}$, and $\alpha_l^{\mathrm{res}}$ - initialized to $0.01$, so the static biases dominate initially and input-dependence phases in:
+A hypernetwork is a net whose weights generate the weights of another map. That is what Hyper-Connections and its successors do: learned projection weights transform $\mathbf{x}_l$ into $H^{\mathrm{pre}}_l$, $H^{\mathrm{post}}_l$, and $H^{\mathrm{res}}_l$, so stored weights generate a new set of routing weights for every token. The projection weights and static biases are learned parameters; the three maps themselves are **generated per token** from the current state. Flatten, RMS-normalize, one matmul plus a bias, then constrain. Each map has its own learnable scale - $\alpha_l^{\mathrm{pre}}$, $\alpha_l^{\mathrm{post}}$, and $\alpha_l^{\mathrm{res}}$ - initialized to $0.01$, so the static biases dominate initially and input-dependence phases in:
 
 $$
 \bar{\mathbf{x}}_l = \mathrm{vec}(\mathbf{x}_l) \in \mathbb{R}^{1\times nC},\qquad x'_l = \mathrm{RMSNorm}(\bar{\mathbf{x}}_l)
@@ -87,6 +93,8 @@ H^{\mathrm{post}}_l &= 2\sigma\!\big(\alpha_l^{\mathrm{post}}\, x'_l\,W^{\mathrm
 H^{\mathrm{res}}_l  &= \mathrm{Sinkhorn}\!\big(\alpha_l^{\mathrm{res}}\, \mathrm{mat}(x'_l\,W^{\mathrm{res}}_l) + b^{\mathrm{res}}_l\big) &&\in \mathcal{M}
 \end{aligned}
 $$
+
+Note that the phrase Hyper-Networks was not mentioned; it is named differently depending on the report, and in DeepSeek-V4 it is named Dynamic Parametrization.
 
 #### Qwen's Gated Residual
 Qwen introduce the **Gated Residual** (GR) in their report, [Qwen3.8-Flash-Next](https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/main/tech_report.pdf), which keeps mHC's widened residual and drops the mix. Same $n = 4$ streams of width $C$. Residual $\mathbf{x}_l \in \mathbb{R}^{n \times C}$, block input $h^{\mathrm{in}}_l$, block output $h^{\mathrm{out}}_l$.
@@ -196,12 +204,12 @@ Qwen's finding, in their words: once the read and write are expressive enough, $
 
 The table below summarizes Qwen's Table 5. What is interesting to see are two leaps in performance. The first is static mHC over the baseline, which shows what widening the residual stream buys, even with static maps. The second is between static and dynamic mHC, which shows the importance of dynamic parameterization. Another important outcome from the table is that GR is not drastically superior to mHC. Note that the mHC rows are Qwen's re-implementation.
 
-| Residual scheme | Loss $\downarrow$ | Benchmark avg $\uparrow$ | $n\times n$ mixer |
-| :--- | ---: | ---: | :--- |
-| Pre-norm baseline | 1.617 | 50.91 | - |
-| mHC, static | 1.596 | 52.49 | yes, Sinkhorn |
-| mHC, dynamic | 1.594 | 54.47 | yes, Sinkhorn |
-| Gated Residual | 1.590 | 54.66 | none |
+| Residual scheme | Streams | Loss $\downarrow$ | Benchmark avg $\uparrow$ | Mix streams |
+| :--- | ---: | ---: | ---: | :--- |
+| Pre-norm baseline | 1 | 1.617 | 50.91 | - |
+| mHC, static | 4 | 1.596 | 52.49 | Sinkhorn |
+| mHC, dynamic | 4 | 1.594 | 54.47 | Sinkhorn |
+| Gated Residual | 4 | 1.590 | 54.66 | none |
 
 #### Summary
 I think that the main thing to take from Qwen's analysis is not which one is better, mHC or GR, but that Qwen achieved similar results without an explicit $n\times n$ mixer on the skip.
