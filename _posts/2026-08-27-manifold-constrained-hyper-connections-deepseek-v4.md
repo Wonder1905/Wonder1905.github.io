@@ -130,7 +130,7 @@ Two moves separate GR from mHC. The compress is elementwise ($G \in \mathbb{R}^{
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .hcfig{--ds:#57ccda;--ds-ink:#8fe0ea;--ds-soft:#0e2c31;--ds-edge:#1d4d55;--qw:#f184b2;--qw-ink:#f7abca;--qw-soft:#331320;--qw-edge:#5e2440}}
 :root[data-theme=dark] .hcfig{--ds:#57ccda;--ds-ink:#8fe0ea;--ds-soft:#0e2c31;--ds-edge:#1d4d55;--qw:#f184b2;--qw-ink:#f7abca;--qw-soft:#331320;--qw-edge:#5e2440}
 .hcfig .scroll{overflow-x:auto}
-.hcfig svg{display:block;width:100%;min-width:820px;height:auto}
+.hcfig svg{display:block;width:100%;height:auto}
 .hcfig figcaption{font-size:.88rem;line-height:1.55;color:var(--global-text-color-light);margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--global-divider-color)}
 .hcfig figcaption b{color:var(--global-text-color)}
 </style>
